@@ -5,13 +5,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
 
-import sys
-sys.path.append('/files/Projet_Barca/')
-sys.path.append('/files/Projet_Barca/Analysis/')
-
-from Team_Data_Loader import load_team_data
-from Analysis_team import explanatory_analysis
-from Analysis_team import assign_opponent_tier 
+ 
 
 
 
@@ -205,22 +199,7 @@ def compare_predictions_with_reality(ml_results, X_test, y_test, test_df):
     
     return comparison_df, accuracy_summary
 
-if __name__ == "__main__":
-    # Load and prepare data
-    team_df = load_team_data()
-    
-    # Run explanatory analysis to get processed data with Opponent_tier
-    results = explanatory_analysis(team_df)
-    processed_df = results['processed_data']
-    
-   
-    
-    # Train ML models
-    X_train, X_test, y_train, y_test, features, test_df = prepare_temporal_split(processed_df)
-    ml_results = train_ml_models(X_train, X_test, y_train, y_test, features)
-    comparison_df, accuracy_summary = compare_predictions_with_reality(ml_results, X_test, y_test, test_df)
-    
-    print("\nML Trainig finish")
+
 
 
 

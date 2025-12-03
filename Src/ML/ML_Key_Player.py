@@ -2,14 +2,11 @@ import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 
-import sys
-sys.path.append('/files/Projet_Barca/')
-sys.path.append('/files/Projet_Barca/Analysis/')
 
-from Team_Data_Loader import load_raw_key_players_data
-from Analysis_key_player import create_advanced_measures
+
+
 
 
 class KMeansClustering:
@@ -135,19 +132,38 @@ class KMeansClustering:
             lambda x: f'Cluster_{x}'
         )
         
-        # Calculate metrics
+            # Basic silhouette score
         if len(np.unique(self.clusters)) > 1:
             silhouette_avg = silhouette_score(X_scaled, self.clusters)
         else:
             silhouette_avg = 0
+    
+        # Comprehensive metrics dictionary
+        metrics = {
+        'silhouette': silhouette_avg,
+        'inertia': self.kmeans.inertia_}
+    
+        # Additional metrics (only valid with 2+ clusters)
+        if len(np.unique(self.clusters)) > 1:
+            metrics['davies_bouldin'] = davies_bouldin_score(X_scaled, self.clusters)
+            metrics['calinski_harabasz'] = calinski_harabasz_score(X_scaled, self.clusters)
+        else:
+            metrics['davies_bouldin'] = 0
+            metrics['calinski_harabasz'] = 0
+        
+
         
         print(f"\nK-means Clustering Results:")
         print(f"- Number of clusters: {n_clusters}")
-        print(f"- Silhouette Score: {silhouette_avg:.3f}")
-        print(f"- Cluster distribution:")
+        print(f"  Silhouette Score     : {metrics['silhouette']:.3f}   (range: [-1, 1], higher = better, >0.5 = good)")
+        print(f"  Davies-Bouldin Index : {metrics['davies_bouldin']:.3f}   (lower = better, <1 = good)")
+        print(f"  Calinski-Harabasz    : {metrics['calinski_harabasz']:.1f}   (higher = better)")
+        print(f"  Inertia (WCSS)       : {metrics['inertia']:.2f}   (lower = better)")
+    
+        print(f"\n- Cluster distribution:")
         print(self.players_df['KMeans_Cluster'].value_counts().sort_index())
         
-        return self.clusters, silhouette_avg
+        return self.clusters, metrics
     
     def analyze_clusters(self):
         # Analyze the resulting clusters 
@@ -283,22 +299,9 @@ def kmeans_clustering_analysis(players_df):
     
 
 
-if __name__ == "__main__":
+
     
-    raw_data = load_raw_key_players_data()
-    players_df = create_advanced_measures(raw_data)
-    
-    print(f"Starting K-means clustering analysis with {len(players_df)} players...")
-    
-    # Run analysis
-    analyzer = kmeans_clustering_analysis(players_df)
-    results_df = analyzer.players_df
-    impactful_player = analyzer.find_most_impactful()
-    
-    print("\nFinal cluster summary:")
-    for cluster in sorted(results_df['KMeans_Cluster'].unique()):
-        cluster_players = results_df[results_df['KMeans_Cluster'] == cluster]
-        print(f"\nCluster {cluster}: {', '.join(cluster_players['Players'].tolist())}")
+
 
 
 

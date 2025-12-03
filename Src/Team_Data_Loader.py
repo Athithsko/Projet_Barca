@@ -6,11 +6,7 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 def load_team_data():
     # We are going to load the data set of the team and clean this one
@@ -146,25 +142,9 @@ def clear_key_player_data(players_df):
 
 
 
-# Main execution
 
 
-if __name__ == "__main__":
-    
-    """" I've wrote this if to import these function in other code"""
-    
-    print("Fc Barcelona 2024-2025 season stats")
-    print("=" * 70)
 
-    team_df = load_team_data()
-    players_raw_df = load_raw_key_players_data()
-    player_clear_df= clear_key_player_data(players_raw_df)
-
-    print("\n" + "=" * 70)
-
-    print(f"Team data: {team_df.shape[0]} matches ready for analysis")
-    print(f"Players data: {player_clear_df.shape[0]} players with {player_clear_df.shape[1]} metrics ready for analysis")
-    print("=" * 70)
 
 
 

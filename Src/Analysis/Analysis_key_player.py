@@ -1,10 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 
 
@@ -304,20 +300,7 @@ def display_all_new_metrics(players_df):
 
 
 
-if __name__ == "__main__":
-    # Charging the data
-    players_raw_df = load_raw_key_players_data()
-    
-    
-    players_analyzed = create_advanced_measures(players_raw_df)
-    
-    
-    players_final = final_data_formatting(players_analyzed)
-    
-    display = display_all_new_metrics(players_final)
-    
-    
-    summary = get_player_statistics_summary(players_final)
+
     
     
     
