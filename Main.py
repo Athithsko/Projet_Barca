@@ -11,8 +11,7 @@ sys.path.append('/files/Projet_Barca/Src/Graphics/')
 from Team_Data_Loader import load_team_data, load_raw_key_players_data, clear_key_player_data
 from Analysis_team import explanatory_analysis, assign_opponent_tier
 from Analysis_key_player import create_advanced_measures, get_player_statistics_summary, display_all_new_metrics, final_data_formatting, calculate_impact_score, classify_player_role
-from Visu_Team import create_comprehensive_dashboard
-from Visu_Key import create_key_players_dashboard
+
 from ML_Team import prepare_temporal_split, train_ml_models, predict_future_matches, compare_predictions_with_reality
 from ML_Key_Player import kmeans_clustering_analysis, KMeansClustering
 
