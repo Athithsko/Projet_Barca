@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
 
-# In[2]:
 
 
 import sys
@@ -52,26 +49,7 @@ def main():
     
     
     
-    accuracy_summary = {
-        'Logistic Regression': {'accuracy': 0.75, 'correct': 6, 'total': 8},
-        'Random Forest': {'accuracy': 0.75, 'correct': 6, 'total': 8},
-        'Gradient Boosting': {'accuracy': 0.875, 'correct': 7, 'total': 8}
-    }
 
-    class MockModel:
-        def __init__(self, importances):
-            self.feature_importances_ = importances
-
-    ml_results = {
-        'Random Forest': MockModel([0.15, 0.20, 0.18, 0.12, 0.08, 0.10, 0.09, 0.08]),
-        'Gradient Boosting': MockModel([0.18, 0.22, 0.20, 0.10, 0.06, 0.09, 0.10, 0.05])
-    }
-
-    comparison_df = None
-
-    # Visualizations of team
-    print("\n Generating visualizations...")
-    create_comprehensive_dashboard(processed_df, ml_results, comparison_df, features, accuracy_summary)
     
     #Analysis Key player
     print("\nAnalyzing data of Key Players...")
@@ -103,8 +81,6 @@ def main():
     
         
     
-    print("\nGenerating key players visualizations...")
-    create_key_players_dashboard(results_df)
     
     
     #Summary
@@ -120,14 +96,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
