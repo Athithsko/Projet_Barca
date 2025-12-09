@@ -1,13 +1,15 @@
-
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+
+OUTPUT_DIR = 'Graphics_Output'
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def setup_visualization_style():
-    # Setup Barcelona-themed color  visualization style(The green is there because of the third jersey of last season
+    # Setup Barcelona-themed color visualization style
     plt.style.use('default')
     sns.set_palette(["blue", "crimson", "gold", "green"])
     plt.rcParams['figure.figsize'] = (14, 8)
@@ -15,14 +17,10 @@ def setup_visualization_style():
 
 
 def plot_player_goals_assists(players_df):
-    # Plot goals and assists by player
     setup_visualization_style()
-    
-    
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
     
-    # Goals by player
     goals_data = players_df.sort_values('Goals', ascending=True)
     ax1.barh(goals_data['Players'], goals_data['Goals'], color='blue', alpha=0.8)
     ax1.set_title('Goals by Player', fontweight='bold', fontsize=14)
@@ -32,7 +30,6 @@ def plot_player_goals_assists(players_df):
     for i, v in enumerate(goals_data['Goals']):
         ax1.text(v + 0.1, i, str(int(v)), va='center', fontweight='bold')
     
-    # Assists by player
     assists_data = players_df.sort_values('Assists', ascending=True)
     ax2.barh(assists_data['Players'], assists_data['Assists'], color='crimson', alpha=0.8)
     ax2.set_title('Assists by Player', fontweight='bold', fontsize=14)
@@ -43,14 +40,12 @@ def plot_player_goals_assists(players_df):
         ax2.text(v + 0.1, i, str(int(v)), va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '09_player_goals_assists.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_minutes(players_df):
-    # Plot minutes played by player
     setup_visualization_style()
-    
-    
     
     minutes_data = players_df.sort_values('Min', ascending=True)
     
@@ -65,18 +60,15 @@ def plot_player_minutes(players_df):
         plt.text(v + 50, i, f'{int(v)} min', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '10_player_minutes.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_passing_stats(players_df):
-    # Plot passing statistics by player 
     setup_visualization_style()
-    
-    
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
     
-    # Total passes
     pass_data = players_df.sort_values('Pass', ascending=True)
     ax1.barh(pass_data['Players'], pass_data['Pass'], color='blue', alpha=0.8)
     ax1.set_title('Total Passes by Player', fontweight='bold', fontsize=14)
@@ -86,7 +78,6 @@ def plot_player_passing_stats(players_df):
     for i, v in enumerate(pass_data['Pass']):
         ax1.text(v + 20, i, str(int(v)), va='center', fontweight='bold')
     
-    # Pass success rate
     success_data = players_df.sort_values('Succes_P%', ascending=True)
     colors = ['green' if x > 80 else 'orange' if x > 70 else 'red' for x in success_data['Succes_P%']]
     ax2.barh(success_data['Players'], success_data['Succes_P%'], color=colors, alpha=0.8)
@@ -99,18 +90,15 @@ def plot_player_passing_stats(players_df):
         ax2.text(v + 1, i, f'{v:.1f}%', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '11_player_passing_stats.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_shooting_stats(players_df):
-    # Plot shooting statistics by player
     setup_visualization_style()
-    
-    
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
     
-    # Total shots
     shots_data = players_df.sort_values('Shots', ascending=True)
     ax1.barh(shots_data['Players'], shots_data['Shots'], color='crimson', alpha=0.8)
     ax1.set_title('Total Shots by Player', fontweight='bold', fontsize=14)
@@ -120,7 +108,6 @@ def plot_player_shooting_stats(players_df):
     for i, v in enumerate(shots_data['Shots']):
         ax1.text(v + 2, i, str(int(v)), va='center', fontweight='bold')
     
-    # Shots on target %
     target_data = players_df.sort_values('Sot%', ascending=True)
     ax2.barh(target_data['Players'], target_data['Sot%'], color='gold', alpha=0.8)
     ax2.set_title('Shots on Target % by Player', fontweight='bold', fontsize=14)
@@ -132,14 +119,12 @@ def plot_player_shooting_stats(players_df):
         ax2.text(v + 1, i, f'{v:.1f}%', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '12_player_shooting_stats.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_xg_stats(players_df):
-    # Plot expected goals statistics by player 
     setup_visualization_style()
-    
-    
     
     xg_data = players_df.sort_values('xG', ascending=True)
     
@@ -154,17 +139,15 @@ def plot_player_xg_stats(players_df):
         ax.text(v + 0.1, i, f'{v:.2f}', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '13_player_xg_stats.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_defensive_stats(players_df):
-    # Plot defensive statistics by player
     setup_visualization_style()
     
     defensive_cols = ['Tkl', 'TklW', 'Int', 'Recov']
     available_cols = [col for col in defensive_cols if col in players_df.columns]
-    
-    
     
     fig, axes = plt.subplots(2, 2, figsize=(16, 10))
     axes = axes.flatten()
@@ -179,19 +162,16 @@ def plot_player_defensive_stats(players_df):
             for i, v in enumerate(data[col]):
                 axes[idx].text(v + 0.5, i, f'{int(v)}', va='center', fontweight='bold')
     
-    # Hide unused subplots
     for idx in range(len(available_cols), 4):
         axes[idx].set_visible(False)
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '14_player_defensive_stats.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_comparison(players_df, metric='Goals'):
-    # Plot player comparison for a specific metric 
     setup_visualization_style()
-    
-    
     
     data = players_df.sort_values(metric, ascending=False)
     
@@ -211,11 +191,11 @@ def plot_player_comparison(players_df, metric='Goals'):
                 f'{v:.1f}', ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, f'15_player_comparison_{metric}.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_overall_stats(players_df):
-    # Create a comprehensive dashboard for all players
     setup_visualization_style()
     
     print("\nPlayer statistic Summary")
@@ -245,14 +225,10 @@ def plot_player_overall_stats(players_df):
 
 
 def plot_impact_score_comparison(players_df):
-    # Plot comparison between Overall Impact Score and Ranking Score
     setup_visualization_style()
-    
-    
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
     
-    # Overall Impact Score
     impact_data = players_df.sort_values('Overall_Impact_Score', ascending=True)
     ax1.barh(impact_data['Players'], impact_data['Overall_Impact_Score'], color='blue', alpha=0.8)
     ax1.set_title('Overall Impact Score (Custom Metric)', fontweight='bold', fontsize=14)
@@ -263,7 +239,6 @@ def plot_impact_score_comparison(players_df):
     for i, v in enumerate(impact_data['Overall_Impact_Score']):
         ax1.text(v + 1, i, f'{v:.1f}', va='center', fontweight='bold')
     
-    # Ranking Score (from ML)
     ranking_data = players_df.sort_values('Ranking_Score', ascending=True)
     ax2.barh(ranking_data['Players'], ranking_data['Ranking_Score'], color='crimson', alpha=0.8)
     ax2.set_title('Ranking Score (ML K-means)', fontweight='bold', fontsize=14)
@@ -274,18 +249,15 @@ def plot_impact_score_comparison(players_df):
         ax2.text(v + 0.01, i, f'{v:.3f}', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '16_impact_score_comparison.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_ml_clustering_visualization(players_df):
-    # Plot K-means clustering results 
     setup_visualization_style()
-    
-    
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
     
-    # Cluster distribution
     cluster_counts = players_df['KMeans_Cluster'].value_counts().sort_index()
     colors_cluster = ['blue', 'crimson', 'gold', 'green'][:len(cluster_counts)]
     ax1.bar(cluster_counts.index, cluster_counts.values, color=colors_cluster, alpha=0.8)
@@ -297,7 +269,6 @@ def plot_ml_clustering_visualization(players_df):
     for i, v in enumerate(cluster_counts.values):
         ax1.text(i, v + 0.05, str(v), ha='center', fontweight='bold')
     
-    # Player roles per cluster
     if 'Player_Role' in players_df.columns:
         cluster_role = pd.crosstab(players_df['KMeans_Cluster'], players_df['Player_Role'])
         cluster_role.plot(kind='bar', ax=ax2, color=['blue', 'crimson', 'gold', 'green', 'purple'][:len(cluster_role.columns)], alpha=0.8)
@@ -309,14 +280,12 @@ def plot_ml_clustering_visualization(players_df):
         plt.setp(ax2.xaxis.get_majorticklabels(), rotation=0)
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '17_ml_clustering.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_player_role_analysis(players_df):
-    # Plot player role distribution and characteristics 
     setup_visualization_style()
-    
-    
     
     fig, ax = plt.subplots(figsize=(12, 6))
     
@@ -336,10 +305,10 @@ def plot_player_role_analysis(players_df):
                 str(int(v)), ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '18_player_role_analysis.png'), dpi=300, bbox_inches='tight')
+    plt.close()
     
-    # Print detailed role information
-    print("\n Player role analysis")
+    print("\nPlayer role analysis")
     print("=" * 70)
     for role in players_df['Player_Role'].unique():
         role_players = players_df[players_df['Player_Role'] == role]
@@ -355,50 +324,20 @@ def plot_player_role_analysis(players_df):
 
 
 def create_key_players_dashboard(players_df):
-    # Create comprehensive visualization dashboard for key players 
     print("\nGenerating Key Players Visualization Dashboard...")
     
-    # Summary statistics
     plot_player_overall_stats(players_df)
-    
-    # Goals and assists
-   
     plot_player_goals_assists(players_df)
-    
-    # Minutes played
-    
     plot_player_minutes(players_df)
-    
-    # Passing statistics
-    
     plot_player_passing_stats(players_df)
-    
-    # Shooting statistics
-    
     plot_player_shooting_stats(players_df)
-    
-    # Expected goals
-    
     plot_player_xg_stats(players_df)
-    
-    # Defensive statistics
-    
     plot_player_defensive_stats(players_df)
-    
-    # Impact score comparison
-    
     plot_impact_score_comparison(players_df)
-    
-    # Player role analysis
-    
     plot_player_role_analysis(players_df)
-    
-    # ML clustering visualization
-    
     plot_ml_clustering_visualization(players_df)
     
-    print("Key Players Dashboard Generated Successfully")
-
+    print(f"\nKey Players Dashboard saved to: {OUTPUT_DIR}/")
 
 
 
