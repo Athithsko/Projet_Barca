@@ -12,8 +12,11 @@ from Team_Data_Loader import load_team_data, load_raw_key_players_data, clear_ke
 from Analysis_team import explanatory_analysis, assign_opponent_tier
 from Analysis_key_player import create_advanced_measures, get_player_statistics_summary, display_all_new_metrics, final_data_formatting, calculate_impact_score, classify_player_role
 
-from ML_Team import prepare_temporal_split, train_ml_models, predict_future_matches, compare_predictions_with_reality
+from ML_Team import prepare_temporal_split, train_ml_models, predict_future_matches, compare_predictions_with_reality, print_auc_scores
 from ML_Key_Player import kmeans_clustering_analysis, KMeansClustering
+
+from Visu_Team import create_comprehensive_dashboard, print_auc_scores
+from Visu_Key import create_key_players_dashboard
 
 def main():
     # Main orchestor function that call everything
@@ -40,11 +43,26 @@ def main():
     # Creating the ML models for the team
     print("\nCreating ML models...")
     
+    # Train ML models
     X_train, X_test, y_train, y_test, features, test_df = prepare_temporal_split(processed_df)
-    ml_results = train_ml_models(X_train, X_test, y_train, y_test, features)
+    
+    
+    
+    # Train and evaluate ML models 
+    ml_results, scaler = train_ml_models(X_train, X_test, y_train, y_test, features)
+
+    # Compare predictions vs actual results 
     comparison_df, accuracy_summary = compare_predictions_with_reality(ml_results, X_test, y_test, test_df)
+
+    # Print AUC scores
+    auc_scores = print_auc_scores(y_test, ml_results, X_test, scaler)
     
     print("\nML Trainig finish")
+    
+    # Visualizations of team
+    
+    create_comprehensive_dashboard(processed_df, ml_results, comparison_df, features, accuracy_summary)
+    auc_scores = print_auc_scores(y_test, ml_results, X_test, scaler)
     
     
     
@@ -75,6 +93,9 @@ def main():
     for cluster in sorted(results_df['KMeans_Cluster'].unique()):
         cluster_players = results_df[results_df['KMeans_Cluster'] == cluster]
         print(f"\nCluster {cluster}: {', '.join(cluster_players['Players'].tolist())}")
+    #Visualization according to Key Players
+    
+    create_key_players_dashboard(results_df)
     
     
     
