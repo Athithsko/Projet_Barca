@@ -4,8 +4,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
-
- 
+from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import StandardScaler
 
 
 
@@ -106,7 +106,7 @@ def train_ml_models(X_train, X_test, y_train, y_test, feature_names):
             print(f"\nFeature Importance:")
             print(feature_importance.to_string(index=False))
     
-    return results
+    return results, scaler
 
 def predict_future_matches(model, scaler, new_data, feature_names, model_name):
     """Make predictions on new matches"""
@@ -200,7 +200,29 @@ def compare_predictions_with_reality(ml_results, X_test, y_test, test_df):
     return comparison_df, accuracy_summary
 
 
-
+def print_auc_scores(y_test, ml_results, X_test, scaler=None):
+    #Print ROC-AUC scores without plots
+    print("\n" + "="*50)
+    print("ROC-AUC Scores")
+    print("="*50)
+    
+    # Scale X_test for Logistic Regression
+    X_test_scaled = scaler.transform(X_test) if scaler else X_test
+    
+    auc_scores = {}
+    for model_name, result in ml_results.items():
+        model = result['model']
+        X_use = X_test_scaled if model_name == 'Logistic Regression' else X_test
+        
+        y_prob = model.predict_proba(X_use)[:, 1]
+        auc_score = roc_auc_score(y_test, y_prob)
+        auc_scores[model_name] = auc_score
+        
+        print(f"  {model_name}: {auc_score:.4f}")
+    
+    best = max(auc_scores, key=auc_scores.get)
+    print(f"\nBest model by AUC: {best} ({auc_scores[best]:.4f})")
+    print("="*50)
 
 
 
