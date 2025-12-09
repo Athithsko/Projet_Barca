@@ -4,9 +4,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import roc_curve, auc, roc_auc_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import os
+
+OUTPUT_DIR = 'Graphics_Output'
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 
@@ -45,7 +50,8 @@ def plot_model_performance(accuracy_summary):
                 f'{accuracy:.1%}', ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '01_model_performance.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_feature_importance(ml_results, feature_names):
@@ -84,7 +90,8 @@ def plot_feature_importance(ml_results, feature_names):
             axes[idx].grid(True, alpha=0.3, axis='x')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '02_feature_importance.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_correlation_matrix(df):
@@ -111,7 +118,8 @@ def plot_correlation_matrix(df):
     
     plt.title('Correlation Matrix - Victory Analysis', fontsize=16, fontweight='bold', pad=20)
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '03_correlation_matrix.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_opponent_tier_analysis(df):
@@ -167,7 +175,8 @@ def plot_opponent_tier_analysis(df):
     ax4.set_title('Match Distribution by Opponent Tier', fontweight='bold')
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '04_opponent_tier_analysis.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
 
 def plot_team_type_comparison(df):
@@ -229,7 +238,9 @@ def plot_team_type_comparison(df):
     ax3.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '05_team_type_comparison.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+    
     
     # Display key statistics
     print("\nTeam type analysis Summary:")
@@ -260,7 +271,10 @@ def plot_team_type_vs_opponent(df):
     plt.xlabel('Opponent Tier (1=Elite, 4=Relegation)')
     plt.ylabel('Team Type (0=Without Stars, 1=With Stars)')
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(OUTPUT_DIR, '05_team_type_comparison.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '06_team_type_vs_opponent.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+
 
 
 def create_comprehensive_dashboard(df, ml_results, comparison_df, feature_names, accuracy_summary):
@@ -279,6 +293,92 @@ def create_comprehensive_dashboard(df, ml_results, comparison_df, feature_names,
     plot_team_type_comparison(df)
     plot_team_type_vs_opponent(df)
     
+    print(f"\nAll graphics saved to: {OUTPUT_DIR}/")
+    
+def plot_roc_curves_comparison(y_test, ml_results, X_test, scaler=None):
+    # Plot ROC curves for all models on the same figure
+    setup_visualization_style()
+    
+    X_test_scaled = scaler.transform(X_test) if scaler else X_test
+    colors = ['blue', 'crimson', 'gold']
+    
+    
+    plt.figure(figsize=(10, 8))
+    
+    auc_scores = {}
+    for idx, (model_name, result) in enumerate(ml_results.items()):
+        model = result['model']
+        X_use = X_test_scaled if model_name == 'Logistic Regression' else X_test
+        
+        y_prob = model.predict_proba(X_use)[:, 1]
+        fpr, tpr, _ = roc_curve(y_test, y_prob)
+        roc_auc = auc(fpr, tpr)
+        auc_scores[model_name] = roc_auc
+        
+        plt.plot(fpr, tpr, color=colors[idx], lw=2, 
+                 label=f'{model_name} (AUC = {roc_auc:.3f})')
+    
+    plt.plot([0, 1], [0, 1], color='gray', lw=2, linestyle='--', label='Random (AUC = 0.500)')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate', fontweight='bold')
+    plt.ylabel('True Positive Rate', fontweight='bold')
+    plt.title('ROC Curves Comparison - Barça Victory Prediction', fontweight='bold', fontsize=14)
+    plt.legend(loc='lower right')
+    plt.grid(True, alpha=0.3)
+    
+    plt.savefig(os.path.join(OUTPUT_DIR, '07_roc_curves_comparison.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    return auc_scores
+
+
+def plot_roc_auc_bar(auc_scores):
+    # Plot AUC scores as bar chart
+    setup_visualization_style()
+    
+    models = list(auc_scores.keys())
+    scores = list(auc_scores.values())
+    
+    # Sort by score
+    sorted_pairs = sorted(zip(scores, models), reverse=True)
+    scores, models = zip(*sorted_pairs)
+    
+    colors = ['blue', 'crimson', 'gold']
+    
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(models, scores, color=colors, alpha=0.8)
+    
+    plt.axhline(y=0.5, color='gray', linestyle='--', lw=2, label='Random Classifier')
+    plt.title('Model Comparison by ROC-AUC Score', fontweight='bold', fontsize=14)
+    plt.ylabel('AUC Score', fontweight='bold')
+    plt.xlabel('Model', fontweight='bold')
+    plt.ylim(0, 1)
+    plt.grid(True, alpha=0.3, axis='y')
+    plt.legend()
+    
+    for bar, score in zip(bars, scores):
+        plt.text(bar.get_x() + bar.get_width()/2., bar.get_height() + 0.02,
+                f'{score:.3f}', ha='center', va='bottom', fontweight='bold')
+    
+    plt.savefig(os.path.join(OUTPUT_DIR, '08_roc_auc_bar.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+
+
+def print_auc_scores(y_test, ml_results, X_test, scaler=None):
+    """Print ROC-AUC scores and generate ROC plots"""
+    
+    # Generate ROC curves plot
+    auc_scores = plot_roc_curves_comparison(y_test, ml_results, X_test, scaler)
+    
+    # Generate AUC bar chart
+    plot_roc_auc_bar(auc_scores)
+    
+
+    print(f"ROC graphics saved to: {OUTPUT_DIR}/")
+    
+    return auc_scores
+
     
 
 
