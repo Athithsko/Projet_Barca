@@ -40,7 +40,7 @@ def plot_player_goals_assists(players_df):
         ax2.text(v + 0.1, i, str(int(v)), va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '09_player_goals_assists.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '10_player_goals_assists.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -60,7 +60,7 @@ def plot_player_minutes(players_df):
         plt.text(v + 50, i, f'{int(v)} min', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '10_player_minutes.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '11_player_minutes.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -90,7 +90,7 @@ def plot_player_passing_stats(players_df):
         ax2.text(v + 1, i, f'{v:.1f}%', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '11_player_passing_stats.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '12_player_passing_stats.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -119,7 +119,7 @@ def plot_player_shooting_stats(players_df):
         ax2.text(v + 1, i, f'{v:.1f}%', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '12_player_shooting_stats.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '13_player_shooting_stats.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -139,7 +139,7 @@ def plot_player_xg_stats(players_df):
         ax.text(v + 0.1, i, f'{v:.2f}', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '13_player_xg_stats.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '14_player_xg_stats.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -166,7 +166,7 @@ def plot_player_defensive_stats(players_df):
         axes[idx].set_visible(False)
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '14_player_defensive_stats.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '15_player_defensive_stats.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -191,7 +191,7 @@ def plot_player_comparison(players_df, metric='Goals'):
                 f'{v:.1f}', ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, f'15_player_comparison_{metric}.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, f'16_player_comparison_{metric}.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -249,7 +249,7 @@ def plot_impact_score_comparison(players_df):
         ax2.text(v + 0.01, i, f'{v:.3f}', va='center', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '16_impact_score_comparison.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '17_impact_score_comparison.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -280,7 +280,7 @@ def plot_ml_clustering_visualization(players_df):
         plt.setp(ax2.xaxis.get_majorticklabels(), rotation=0)
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '17_ml_clustering.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '18_ml_clustering.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -305,7 +305,7 @@ def plot_player_role_analysis(players_df):
                 str(int(v)), ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '18_player_role_analysis.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(OUTPUT_DIR, '19_player_role_analysis.png'), dpi=300, bbox_inches='tight')
     plt.close()
     
     print("\nPlayer role analysis")
@@ -333,6 +333,7 @@ def create_key_players_dashboard(players_df):
     plot_player_shooting_stats(players_df)
     plot_player_xg_stats(players_df)
     plot_player_defensive_stats(players_df)
+    plot_player_comparison(players_df)
     plot_impact_score_comparison(players_df)
     plot_player_role_analysis(players_df)
     plot_ml_clustering_visualization(players_df)
