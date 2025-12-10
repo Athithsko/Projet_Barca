@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
 from sklearn.metrics import roc_auc_score
 from sklearn.preprocessing import StandardScaler
-
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 
 
 
@@ -105,6 +105,15 @@ def train_ml_models(X_train, X_test, y_train, y_test, feature_names):
             }).sort_values('importance', ascending=False)
             print(f"\nFeature Importance:")
             print(feature_importance.to_string(index=False))
+        
+        # Coefficients for Logistic Regression
+        elif hasattr(model, 'coef_'):
+            feature_importance = pd.DataFrame({
+                'feature': feature_names,
+                'importance': np.abs(model.coef_[0])
+            }).sort_values('importance', ascending=False)
+            print(f"\nFeature Importance (absolute coefficients):")
+            print(feature_importance.to_string(index=False))
     
     return results, scaler
 
@@ -200,8 +209,8 @@ def compare_predictions_with_reality(ml_results, X_test, y_test, test_df):
     return comparison_df, accuracy_summary
 
 
-def print_auc_scores(y_test, ml_results, X_test, scaler=None):
-    #Print ROC-AUC scores without plots
+def calculate_auc_scores(y_test, ml_results, X_test, scaler=None):
+    # Print ROC-AUC scores without plots
     print("\n" + "="*50)
     print("ROC-AUC Scores")
     print("="*50)
@@ -209,22 +218,60 @@ def print_auc_scores(y_test, ml_results, X_test, scaler=None):
     # Scale X_test for Logistic Regression
     X_test_scaled = scaler.transform(X_test) if scaler else X_test
     
-    auc_scores = {}
+    scores = {}
     for model_name, result in ml_results.items():
         model = result['model']
         X_use = X_test_scaled if model_name == 'Logistic Regression' else X_test
         
         y_prob = model.predict_proba(X_use)[:, 1]
         auc_score = roc_auc_score(y_test, y_prob)
-        auc_scores[model_name] = auc_score
+        scores[model_name] = auc_score
         
         print(f"  {model_name}: {auc_score:.4f}")
     
-    best = max(auc_scores, key=auc_scores.get)
-    print(f"\nBest model by AUC: {best} ({auc_scores[best]:.4f})")
+    best = max(scores, key=scores.get)
+    print(f"\nBest model by AUC: {best} ({scores[best]:.4f})")
     print("="*50)
+    
+    return scores
 
 
 
 
-
+def cross_validate_models(X, y, feature_names):
+    # Cross-validation for more reliable ROC-AUC scores
+    """ Because the different scores are kinda low. I think it's due too the low number of test and due to the lack of diversity in the result of the         test matches """
+    
+    models = {
+        'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000),
+        'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
+        'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
+    }
+    
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    
+    print("\n" + "="*50)
+    print("Cross-Validation ROC-AUC Scores ")
+    print("="*50)
+    
+    cv_results = {}
+    for name, model in models.items():
+        X_use = X_scaled if name == 'Logistic Regression' else X
+        scores = cross_val_score(model, X_use, y, cv=cv, scoring='roc_auc')
+        cv_results[name] = {
+            'mean': scores.mean(),
+            'std': scores.std(),
+            'scores': scores
+        }
+        print(f"\n{name}:")
+        print(f"  AUC: {scores.mean():.4f} (+/- {scores.std():.4f})")
+        print(f"  Folds: {[f'{s:.3f}' for s in scores]}")
+    
+    best = max(cv_results, key=lambda x: cv_results[x]['mean'])
+    print(f"\nBest model (CV): {best} ({cv_results[best]['mean']:.4f})")
+    print("="*50)
+    
+    return cv_results
