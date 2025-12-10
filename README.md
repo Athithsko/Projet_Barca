@@ -62,8 +62,7 @@ Projet_Barca/
 │   ├── ProjetBarca.csv        # Team match data (38 matches)
 │   └── Key_players.csv        # Player statistics
 ├── Graphics_Output/           # Output plots 
-│   ├──Key player/        
-│   └──Team/
+│   
 └── notebooks/                 # Exploration (optional)
 ```
 
