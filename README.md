@@ -102,18 +102,21 @@ Projet_Barca/
 ## Results
 
 ### Team Analysis
-| Model | Accuracy | Precision | Recall | F1-Score |
-|-------|----------|-----------|--------|----------|
-| Logistic Regression | 0.75| 1 | 0.714 | 0.833 |
-| Random Forest | 0.75 | 0.857 | 0.857 | 0.857 |
-| Gradient Boosting | 0.875 | 0.875 | 1 | 0.933 |
 
-``` Best model: Gradient Boosting with 87.5% accuracy and 0.933 F1-Score ```
+We evaluated three models using temporal splitting (Train: 30 matches, Test: 8 matches) and 5-fold Cross-Validation to assess robustness.
+
+| Model | Accuracy | F1-Score | ROC-AUC (Test) | ROC-AUC (CV Mean) |
+|-------|----------|----------|----------------|-------------------|
+| Logistic Regression | 0.750 | 0.833 | 0.714 | 0.930 (+/- 0.098) |
+| Random Forest | 0.750 | 0.857 | 0.286 | 0.857 (+/- 0.179) |
+| Gradient Boosting | 0.875 | 0.933 | 0.286 | 0.703 (+/- 0.213) |
+
+``` Best model: Gradient Boosting (Accuracy) vs Logistic Regression (AUC Stability) ```
 
 **Key Findings:**
-- Home advantage impact on win rate
-- xG efficiency as a victory predictor
-- Star player availability effect on performance
+- **Accuracy vs Robustness**: While Gradient Boosting achieved the highest accuracy (87.5%) on the test set, Logistic Regression demonstrated better separation capability (Best ROC-AUC: 0.714).
+- **Cross-Validation**: The 5-fold cross-validation reveals that Logistic Regression is actually the most robust model on average (AUC 0.930), while tree-based models suffer more variance due to the small dataset size.
+- **Predictive Factors**: xG Efficiency and xGA Efficiency proved to be the most consistent predictors of victory.
 
 ### Player Analysis
 | Player | Role | Impact Score | Ml Ranking score |
