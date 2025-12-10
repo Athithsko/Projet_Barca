@@ -278,7 +278,7 @@ def plot_team_type_vs_opponent(df):
 
 
 
-def create_comprehensive_dashboard(df, ml_results, comparison_df, feature_names, accuracy_summary):
+def create_comprehensive_dashboard(df, ml_results, comparison_df, feature_names, accuracy_summary, auc_scores=None, y_test=None, X_test=None, scaler=None, cv_results=None):
     # Create comprehensive visualization dashboard 
     print("Generating Comprehensive Visualization Dashboard...")
     
@@ -293,6 +293,12 @@ def create_comprehensive_dashboard(df, ml_results, comparison_df, feature_names,
     # Team analyses
     plot_team_type_comparison(df)
     plot_team_type_vs_opponent(df)
+    
+    # ROC analyses
+    plot_roc_curves_comparison(y_test, ml_results, X_test, scaler)
+    plot_roc_auc_bar(auc_scores)
+    # Cross Validation analyses 
+    plot_cross_validation_results(cv_results)
     
     print(f"\nAll graphics saved to: {OUTPUT_DIR}/")
     
@@ -365,20 +371,43 @@ def plot_roc_auc_bar(auc_scores):
     plt.savefig(os.path.join(OUTPUT_DIR, '08_roc_auc_bar.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
-
-def print_auc_scores(y_test, ml_results, X_test, scaler=None):
-    """Print ROC-AUC scores and generate ROC plots"""
+def plot_cross_validation_results(cv_results):
+    setup_visualization_style()
     
-    # Generate ROC curves plot
-    auc_scores = plot_roc_curves_comparison(y_test, ml_results, X_test, scaler)
+    models = list(cv_results.keys())
+    means = [cv_results[model]['mean'] for model in models]
+    stds = [cv_results[model]['std'] for model in models]
     
-    # Generate AUC bar chart
-    plot_roc_auc_bar(auc_scores)
+    # Color management
+    base_colors = ['blue', 'crimson', 'gold']
+    colors = sns.color_palette("husl", len(models)) if len(models) > 3 else base_colors[:len(models)]
     
-
-    print(f"ROC graphics saved to: {OUTPUT_DIR}/")
+    plt.figure(figsize=(10, 6))
     
-    return auc_scores
+    # Create bars
+    bars = plt.bar(models, means, yerr=stds, capsize=12, 
+                   color=colors, alpha=0.85, 
+                   edgecolor='black', linewidth=1.5,
+                   error_kw={'elinewidth': 2.5, 'ecolor': '#404040', 'capthick': 2},
+                   zorder=3)
+    
+    plt.title('Cross-Validation ROC-AUC Scores (5-Fold)', fontweight='bold', fontsize=16, pad=20)
+    plt.ylabel('Mean AUC Score', fontweight='bold', fontsize=12)
+    plt.xlabel('Model', fontweight='bold', fontsize=12)
+    plt.ylim(0, 1.15)
+    plt.grid(True, axis='y', linestyle='--', alpha=0.3, zorder=0)
+    
+    # Add text with white background
+    for bar, mean, std in zip(bars, means, stds):
+        plt.text(bar.get_x() + bar.get_width()/2., bar.get_height() + std + 0.02,
+                f'{mean:.3f}\n(±{std:.3f})', 
+                ha='center', va='bottom', fontweight='bold', fontsize=11,
+                bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=2))
+    # Saving 
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUTPUT_DIR, '09_cross_validation_results.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+    
 
     
 
