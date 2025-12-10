@@ -1,4 +1,4 @@
-
+import pandas as pd
 
 
 import sys
@@ -12,10 +12,10 @@ from Team_Data_Loader import load_team_data, load_raw_key_players_data, clear_ke
 from Analysis_team import explanatory_analysis, assign_opponent_tier
 from Analysis_key_player import create_advanced_measures, get_player_statistics_summary, display_all_new_metrics, final_data_formatting, calculate_impact_score, classify_player_role
 
-from ML_Team import prepare_temporal_split, train_ml_models, predict_future_matches, compare_predictions_with_reality, print_auc_scores
+from ML_Team import prepare_temporal_split, train_ml_models, predict_future_matches, compare_predictions_with_reality, calculate_auc_scores, cross_validate_models
 from ML_Key_Player import kmeans_clustering_analysis, KMeansClustering
 
-from Visu_Team import create_comprehensive_dashboard, print_auc_scores
+from Visu_Team import create_comprehensive_dashboard, plot_roc_curves_comparison, plot_roc_auc_bar
 from Visu_Key import create_key_players_dashboard
 
 def main():
@@ -54,15 +54,19 @@ def main():
     # Compare predictions vs actual results 
     comparison_df, accuracy_summary = compare_predictions_with_reality(ml_results, X_test, y_test, test_df)
 
-    # Print AUC scores
-    auc_scores = print_auc_scores(y_test, ml_results, X_test, scaler)
+    # Calculate AUC scores 
+    auc_results = calculate_auc_scores(y_test, ml_results, X_test, scaler)
+    
+    # Cross-validation for more accurate ROC-AUC scores
+    X_full = pd.concat([X_train, X_test])
+    y_full = pd.concat([y_train, y_test])
+    cv_results = cross_validate_models(X_full, y_full, features)
     
     print("\nML Trainig finish")
     
     # Visualizations of team
     
-    create_comprehensive_dashboard(processed_df, ml_results, comparison_df, features, accuracy_summary)
-    auc_scores = print_auc_scores(y_test, ml_results, X_test, scaler)
+    create_comprehensive_dashboard(processed_df, ml_results, comparison_df, features, accuracy_summary, auc_results, y_test, X_test, scaler, cv_results)
     
     
     
