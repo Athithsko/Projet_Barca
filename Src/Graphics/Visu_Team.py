@@ -27,9 +27,7 @@ def plot_model_performance(accuracy_summary):
     # Plot model performance comparison
     setup_visualization_style()
     
-    if not accuracy_summary:
-        print("No model performance data available")
-        return
+    
     
     models = list(accuracy_summary.keys())
     accuracies = [accuracy_summary[model]['accuracy'] for model in models]
@@ -58,36 +56,39 @@ def plot_feature_importance(ml_results, feature_names):
     # Plot feature importance from ML models 
     setup_visualization_style()
     
-    if not ml_results or not feature_names:
-        print("No feature importance data available")
+    
+    
+    # Get importance for all models
+    models_with_importance = {}
+    for model_name, result in ml_results.items():
+        model = result['model'] if isinstance(result, dict) else result
+        if hasattr(model, 'feature_importances_'):
+            models_with_importance[model_name] = model.feature_importances_
+        elif hasattr(model, 'coef_'):
+            models_with_importance[model_name] = np.abs(model.coef_[0])
+    
+    if not models_with_importance:
+        print("No models with feature importance available")
         return
     
-    fig, axes = plt.subplots(1, len(ml_results), figsize=(6*len(ml_results), 5))
+    fig, axes = plt.subplots(1, len(models_with_importance), figsize=(6*len(models_with_importance), 5))
     
     # Handle single model case
-    if len(ml_results) == 1:
+    if len(models_with_importance) == 1:
         axes = [axes]
     
-    for idx, (model_name, model) in enumerate(ml_results.items()):
-        if hasattr(model, 'feature_importances_'):
-            importances = np.array(model.feature_importances_)
-            
-            # Ensure we have the right number of features
-            if len(importances) != len(feature_names):
-                print(f"Warning: {model_name} has {len(importances)} importances but {len(feature_names)} features")
-                continue
-            
-            # Sort by importance
-            sorted_idx = np.argsort(importances)[::-1].tolist()
-            sorted_features = [feature_names[i] for i in sorted_idx]
-            sorted_importances = importances[sorted_idx]
-            
-            # Plot
-            axes[idx].barh(sorted_features, sorted_importances, color='blue', alpha=0.8)
-            axes[idx].set_title(f'{model_name}\nFeature Importance', fontweight='bold')
-            axes[idx].set_xlabel('Importance')
-            axes[idx].invert_yaxis()
-            axes[idx].grid(True, alpha=0.3, axis='x')
+    for idx, (model_name, importances) in enumerate(models_with_importance.items()):
+        # Sort by importance
+        sorted_idx = np.argsort(importances)[::-1]
+        sorted_features = [feature_names[i] for i in sorted_idx]
+        sorted_importances = importances[sorted_idx]
+        
+        # Plot
+        axes[idx].barh(sorted_features, sorted_importances, color='blue', alpha=0.8)
+        axes[idx].set_title(f'{model_name}\nFeature Importance', fontweight='bold')
+        axes[idx].set_xlabel('Importance')
+        axes[idx].invert_yaxis()
+        axes[idx].grid(True, alpha=0.3, axis='x')
     
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, '02_feature_importance.png'), dpi=300, bbox_inches='tight')
