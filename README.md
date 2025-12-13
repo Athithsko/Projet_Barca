@@ -129,10 +129,18 @@ We evaluated three models using temporal splitting (Train: 30 matches, Test: 8 m
 ## Key Metrics Explained
 
 ### Overall Impact Score (0-100)
-A composite metric inspired by FIFA player ratings, weighted by player role:
-- **Goalscorers**: 40% offensive, 20% dribbling, 20% passing
-- **Playmakers**: 30% passing, 40% dribbling, 30% offensive
-- **Defenders**: 30% defensive, 30% passing, 20% physicality
+
+A composite metric inspired by FIFA player ratings, **weighted by player role** to reflect their tactical responsibilities:
+
+#### **Role-Specific Weight Distribution**
+
+| Role | Offensive | Dribbling | Passing | Defensive | Stamina |
+|------|-----------|-----------|---------|-----------|---------|
+| **Goalscorer** | 40% | 20% | 20% | 10% | 10% |
+| **Playmaker** | 30% | 40% | 30% | 10% | 10% |
+| **Creative Midfielder** | 5% | 30% | 30% | 20% | 15% |
+| **Defender** | 5% | 15% | 30% | 30% | 20% |
+| **Default** | 25% | 25% | 20% | 20% | 10% |
 
 ### xG Efficiency
 ```xG_efficiency = Goals Scored / Expected Goals (xG)```
