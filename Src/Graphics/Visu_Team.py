@@ -272,7 +272,7 @@ def plot_team_type_vs_opponent(df):
     plt.xlabel('Opponent Tier (1=Elite, 4=Relegation)')
     plt.ylabel('Team Type (0=Without Stars, 1=With Stars)')
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, '05_team_type_comparison.png'), dpi=300, bbox_inches='tight')
+    
     plt.savefig(os.path.join(OUTPUT_DIR, '06_team_type_vs_opponent.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
