@@ -6,13 +6,18 @@
 
 import pandas as pd
 import numpy as np
+import os
 
 
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def load_team_data():
     # We are going to load the data set of the team and clean this one
     
     # 1. Uploading the data
-    df = pd.read_csv('/files/Projet_Barca/Data_set/ProjetBarca.csv', sep=';', encoding='latin1')
+    
+    
+    df = pd.read_csv(os.path.join(BASE_DIR, 'Data_set', 'ProjetBarca.csv'), sep=';', encoding='latin1')
 
     # 2. Clean the dataset
     
@@ -52,8 +57,7 @@ def load_team_data():
 
 def load_raw_key_players_data():
     # Load and process key players (Pedri, Raphinia, Lamine Yamal and Inigo Martinez) performance data
-    
-    players_df = pd.read_csv('/files/Projet_Barca/Data_set/Key_players.csv', sep=';', encoding='latin1')
+    players_df = pd.read_csv(os.path.join(BASE_DIR, 'Data_set', 'Key_players.csv'), sep=';', encoding='latin1')
     
     # CORR : Fix encoding issues before any display
     

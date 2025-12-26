@@ -9,7 +9,7 @@ import numpy as np
 
 
 
-from Team_Data_Loader import load_team_data
+
 
 def explanatory_analysis(df):
 
@@ -26,6 +26,27 @@ def explanatory_analysis(df):
     print("Correlation with victory")
     correlation_with_win = df[['Poss', 'GF', 'GA', 'xG', 'xGA', 'Equipe_type','Victory' ]].corr()['Victory'].sort_values(ascending=False)
     print(correlation_with_win.round(2))
+    
+    
+    #Performences with and without Key Player
+    print("\n" + "-" * 40)
+    
+    print("With vs Without Key Players ")
+    
+    print("-" * 40)
+    
+    with_match= df[df['Equipe_type'] == 1]
+    without_match= df[df['Equipe_type'] == 0]
+    
+    print(f"Number of matches with Key players:{len(with_match)}")
+    print(f"With Key players Win Rate: {(with_match['Victory'].mean()*100):.1f}%")
+    print(f"With Key players Goals by game: {(with_match['GF'].mean()):.2f}")
+    print(f"With Key players Goals against by game: {(with_match['GA'].mean()):.2f}")
+    
+    print(f"Number of  matches without Key players:{len(without_match)}")
+    print(f"Without Key players Win Rate: {(without_match['Victory'].mean()*100):.1f}%")
+    print(f"Without Key players Goals by game: {(without_match['GF'].mean()):.2f}")
+    print(f"Without Key players Goals against by game: {(without_match['GA'].mean()):.2f}")
     
     #Performences of Home game vs Away game
     
