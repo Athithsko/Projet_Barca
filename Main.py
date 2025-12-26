@@ -1,11 +1,16 @@
 import pandas as pd
 
 
+import os
 import sys
-sys.path.append('/files/Projet_Barca/Src/')
-sys.path.append('/files/Projet_Barca/Src/Analysis/')
-sys.path.append('/files/Projet_Barca/Src/ML/')
-sys.path.append('/files/Projet_Barca/Src/Graphics/')
+
+# Get the directory where Main.py is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+sys.path.append(os.path.join(BASE_DIR, 'Src'))
+sys.path.append(os.path.join(BASE_DIR, 'Src', 'Analysis'))
+sys.path.append(os.path.join(BASE_DIR, 'Src', 'ML'))
+sys.path.append(os.path.join(BASE_DIR, 'Src', 'Graphics'))
 
 
 from Team_Data_Loader import load_team_data, load_raw_key_players_data, clear_key_player_data
