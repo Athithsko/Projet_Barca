@@ -15,6 +15,12 @@ This project analyzes FC Barcelona's 2024-2025 La Liga season through two comple
 - Python 3.11
 - Conda (recommended for Nuvolos) or pip
 
+### Clone the repository
+```bash
+git clone https://github.com/Athithsko/Projet_Barca.git
+cd Projet_Barca
+```
+
 ### Create Environment
 
 ```bash 
@@ -42,9 +48,13 @@ python main.py
 ## Project Structure
 
 ```
+## Project Structure
+
 Projet_Barca/
 ├── main.py                    # Entry point
 ├── README.md                  # This file
+├── PROPOSAL.md                # Project proposal
+├── AI_USAGE.md                # AI tools disclosure
 ├── environment.yml            # Conda dependencies
 ├── requirements.txt           # Pip dependencies
 ├── Src/
@@ -65,7 +75,6 @@ Projet_Barca/
 │   
 └── notebooks/                 # Exploration (optional)
 ```
-
 ## Methodology
 
 ### Data Sources
