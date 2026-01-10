@@ -29,7 +29,7 @@ conda env create -f environment.yml
 conda activate Projet_Barca
 
 # Or using pip
-pip install -r requirements.txt
+pip install -r requirement.txt
 
 ```
 
