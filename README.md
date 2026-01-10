@@ -38,6 +38,7 @@ pip install -r requirement.txt
 
 
 python Main.py
+ls Graphics_Output/ # to be sure That the Main.py did launch correctly
 
 ```
 **Expected output**: 
